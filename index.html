@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daily Portfolio Tracker</title>
+  <title>Dark Horse Investment Group — Portfolio</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
     th { background-color: #f4f4f4; }
+    tfoot { font-weight: bold; background-color: #eaeaea; }
   </style>
 </head>
 <body>
-  <h1>My Equity Portfolio</h1>
+  <h1 style="text-align: center;">Dark Horse Investment Group -- Portfolio</h1>
   <table id="portfolio">
     <thead>
       <tr>
@@ -25,12 +26,19 @@
       </tr>
     </thead>
     <tbody></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3">Total</td>
+        <td id="totalValue">$0.00</td>
+        <td id="totalCost">$0.00</td>
+        <td id="totalGain">$0.00</td>
+      </tr>
+    </tfoot>
   </table>
 
   <script>
-    const apiKey = 'd10qn8pr01qse6ldf5v0d10qn8pr01qse6ldf5vg'; // <-- Replaced with my actual API key
+    const apiKey = 'YOUR_API_KEY_HERE';
 
-    // UPDATED portfolio: real tickers, shares, and cost basis
     const portfolio = [
       { symbol: "AAPL", shares: 1.0083, costBasis: 176.04 },
       { symbol: "AMZN", shares: 3, costBasis: 396.36 },
@@ -68,17 +76,23 @@
     async function fetchPrice(symbol) {
       const response = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`);
       const data = await response.json();
-      return data.c; // current price
+      return data.c;
     }
 
     async function updatePortfolio() {
       const tbody = document.querySelector("#portfolio tbody");
       tbody.innerHTML = "";
 
+      let totalMarketValue = 0;
+      let totalCostBasis = 0;
+
       for (const stock of portfolio) {
         const price = await fetchPrice(stock.symbol);
         const marketValue = price * stock.shares;
         const gain = marketValue - stock.costBasis;
+
+        totalMarketValue += marketValue;
+        totalCostBasis += stock.costBasis;
 
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -93,6 +107,9 @@
       }
 
       // Add cash row
+      totalMarketValue += cashPosition.costBasis;
+      totalCostBasis += cashPosition.costBasis;
+
       const cashRow = document.createElement("tr");
       cashRow.innerHTML = `
         <td>${cashPosition.symbol}</td>
@@ -103,10 +120,18 @@
         <td style="color: gray;">$0.00</td>
       `;
       tbody.appendChild(cashRow);
+
+      // Update total row
+      const totalGain = totalMarketValue - totalCostBasis;
+      document.getElementById("totalValue").textContent = `$${totalMarketValue.toFixed(2)}`;
+      document.getElementById("totalCost").textContent = `$${totalCostBasis.toFixed(2)}`;
+      document.getElementById("totalGain").textContent = `$${totalGain.toFixed(2)}`;
+      document.getElementById("totalGain").style.color = totalGain >= 0 ? 'green' : 'red';
     }
 
     updatePortfolio();
   </script>
 </body>
 </html>
+
 
