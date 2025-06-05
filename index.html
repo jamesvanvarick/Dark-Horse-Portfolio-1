@@ -12,6 +12,7 @@
     th { background-color: #f4f4f4; }
     tfoot { font-weight: bold; background-color: #eaeaea; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <h1 style="text-align: center;">Dark Horse Investment Group -- Portfolio</h1>
@@ -40,9 +41,10 @@
       </tr>
     </tfoot>
   </table>
+  <canvas id="industryChart" width="400" height="400" style="max-width: 600px; margin: 40px auto; display: block;"></canvas>
 
   <script>
-    const apiKey = 'd10qn8pr01qse6ldf5v0d10qn8pr01qse6ldf5vg';
+    const apiKey = 'YOUR_API_KEY_HERE';
 
     const portfolio = [
       { symbol: "AAPL", shares: 1.0083, costBasis: 176.04 },
@@ -94,6 +96,7 @@
       for (const stock of portfolio) {
         const price = await fetchPrice(stock.symbol);
         const marketValue = price * stock.shares;
+        stock.lastMarketValue = marketValue;
         const gain = marketValue - stock.costBasis;
 
         totalMarketValue += marketValue;
@@ -138,6 +141,76 @@
       document.getElementById("totalPercentGain").style.color = totalGain >= 0 ? 'green' : 'red';
     }
 
+  const industryMap = {
+      AAPL: "Technology",
+      AMZN: "Consumer Discretionary",
+      ARM: "Technology",
+      BABA: "Consumer Discretionary",
+      BIRK: "Consumer Discretionary",
+      CAT: "Industrials",
+      CRWD: "Technology",
+      HWM: "Industrials",
+      JPM: "Financials",
+      KKR: "Financials",
+      META: "Technology",
+      NVDA: "Technology",
+      NVO: "Healthcare",
+      RIOT: "Technology",
+      TSLA: "Consumer Discretionary",
+      UNH: "Healthcare",
+      WMT: "Consumer Staples",
+      BTC: "Cryptocurrency",
+      CIBR: "ETF",
+      ETH: "Cryptocurrency",
+      ETHE: "Cryptocurrency",
+      GBTC: "Cryptocurrency",
+      IWM: "ETF",
+      KWEB: "ETF",
+      SOXX: "ETF",
+      VNQ: "Real Estate",
+      VTV: "ETF",
+      VUG: "ETF",
+      XME: "Materials"
+    };
+    
+  function renderIndustryChart(dataByIndustry) {
+    const ctx = document.getElementById("industryChart").getContext("2d");
+    const labels = Object.keys(dataByIndustry);
+    const data = Object.values(dataByIndustry);
+  
+    new Chart(ctx, {
+      type: "pie",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Industry Allocation",
+          data: data,
+          backgroundColor: [
+            "#4caf50", "#2196f3", "#ff9800", "#9c27b0", "#f44336",
+            "#3f51b5", "#00bcd4", "#795548", "#8bc34a", "#ff5722"
+          ]
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: "bottom"
+          }
+        }
+      }
+    });
+  }
+
+    const industryTotals = {};
+
+    for (const stock of portfolio) {
+      const industry = industryMap[stock.symbol] || "Other";
+      industryTotals[industry] = (industryTotals[industry] || 0) + (stock.lastMarketValue || 0);
+    }
+
+    renderIndustryChart(industryTotals);
+
+    
     updatePortfolio();
   </script>
 </body>
