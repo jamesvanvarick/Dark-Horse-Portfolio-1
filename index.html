@@ -24,15 +24,19 @@
         <th>Market Value</th>
         <th>Cost Basis</th>
         <th>Gain/Loss</th>
+        <th>% Gain/Loss</th>
       </tr>
     </thead>
     <tbody></tbody>
     <tfoot>
       <tr>
-        <td colspan="3">Total</td>
+        <td><strong>Total</strong></td>
+        <td>-</td>
+        <td>-</td>
         <td id="totalValue">$0.00</td>
         <td id="totalCost">$0.00</td>
         <td id="totalGain">$0.00</td>
+        <td id="totalPercentGain">0.00%</td>
       </tr>
     </tfoot>
   </table>
@@ -103,6 +107,7 @@
           <td>$${marketValue.toFixed(2)}</td>
           <td>$${stock.costBasis.toFixed(2)}</td>
           <td style="color: ${gain >= 0 ? 'green' : 'red'};">$${gain.toFixed(2)}</td>
+          <td style="color: ${gain >= 0 ? 'green' : 'red'};">${((gain / stock.costBasis) * 100).toFixed(2)}%</td>
         `;
         tbody.appendChild(row);
       }
@@ -128,11 +133,12 @@
       document.getElementById("totalCost").textContent = `$${totalCostBasis.toFixed(2)}`;
       document.getElementById("totalGain").textContent = `$${totalGain.toFixed(2)}`;
       document.getElementById("totalGain").style.color = totalGain >= 0 ? 'green' : 'red';
+      const totalPercentGain = (totalGain / totalCostBasis) * 100;
+      document.getElementById("totalPercentGain").textContent = `${totalPercentGain.toFixed(2)}%`;
+      document.getElementById("totalPercentGain").style.color = totalGain >= 0 ? 'green' : 'red';
     }
 
     updatePortfolio();
   </script>
 </body>
 </html>
-
-
