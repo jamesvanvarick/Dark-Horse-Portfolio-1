@@ -181,6 +181,17 @@
         }
       });
     }
+
+    const etfIndustryMap = {
+      CIBR: "Technology",
+      IWM: "Diversified",
+      KWEB: "Technology",
+      SOXX: "Technology",
+      VNQ: "Real Estate",
+      VTV: "Financials",
+      VUG: "Technology",
+      XME: "Materials"
+    };
     
     async function updatePortfolio() {
       const tbody = document.querySelector("#portfolio tbody");
@@ -267,5 +278,4 @@
   </script>
 </body>
 </html>
-
 
