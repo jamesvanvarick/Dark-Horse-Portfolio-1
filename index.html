@@ -16,7 +16,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1 style="text-align: center;">Dark Horse Investment Group ~ Portfolio</h1>
+  <h1 style="text-align: center;">Dark Horse Investment Group -- Portfolio</h1>
   <table id="portfolio">
     <thead>
       <tr>
@@ -44,7 +44,8 @@
   </table>
 
   <canvas id="industryChart" width="400" height="400" style="max-width: 600px; margin: 40px auto; display: block;"></canvas>
-
+  <canvas id="etfChart" width="400" height="400" style="max-width: 600px; margin: 40px auto; display: block;"></canvas>
+  
   <script>
     const apiKey = 'd10qn8pr01qse6ldf5v0d10qn8pr01qse6ldf5vg'; // Replace this with your real Finnhub API key
 
@@ -140,6 +141,47 @@
       });
     }
 
+    function renderEtfChart(dataByEtfIndustry) {
+      const ctx = document.getElementById("etfChart").getContext("2d");
+      const labels = Object.keys(dataByEtfIndustry);
+      const data = Object.values(dataByEtfIndustry);
+      const total = data.reduce((sum, val) => sum + val, 0);
+
+      const labelWithPercent = labels.map((label, i) => {
+        const percent = ((data[i] / total) * 100).toFixed(1);
+        return `${label} (${percent}%)`;
+      });
+
+      new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: labelWithPercent,
+          datasets: [{
+            label: "ETF Sector Exposure",
+            data: data,
+            backgroundColor: [
+              "#ff6384", "#36a2eb", "#ffcd56", "#4bc0c0",
+              "#9966ff", "#ff9f40", "#c9cbcf", "#8bc34a"
+            ]
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { position: "bottom" },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const raw = context.raw;
+                  const percent = ((raw / total) * 100).toFixed(1);
+                  return `${context.label}: $${raw.toFixed(2)} (${percent}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    
     async function updatePortfolio() {
       const tbody = document.querySelector("#portfolio tbody");
       tbody.innerHTML = "";
@@ -210,9 +252,20 @@
       document.getElementById("totalPercentGain").style.color = totalGain >= 0 ? 'green' : 'red';
 
       renderIndustryChart(industryTotals);
-    }
 
+      const etfIndustryTotals = {};
+      portfolio.forEach(stock => {
+        if (etfIndustryMap[stock.symbol] && stock.lastMarketValue) {
+          const sector = etfIndustryMap[stock.symbol];
+          etfIndustryTotals[sector] = (etfIndustryTotals[sector] || 0) + stock.lastMarketValue;
+        }
+      });
+      renderEtfChart(etfIndustryTotals);
+    }
+    
     updatePortfolio();
   </script>
 </body>
 </html>
+
+
