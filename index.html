@@ -16,15 +16,17 @@
     .chart-wrapper {
       flex: 1 1 300px;
       max-width: 400px;
+      height: 350px; /* lock vertical space */
       display: flex;
       justify-content: center;
       align-items: center;
     }
-
+    
     .chart-wrapper canvas {
-      width: 300px !important;
-      height: 300px !important;
+      width: 100% !important;
+      height: 100% !important;
     }
+
     
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -161,18 +163,34 @@
           }]
         },
         options: {
+          layout: {
+            padding: 20
+          },
           plugins: {
-            legend: { position: "bottom" },
+            legend: {
+              position: "bottom",
+              align: "center",
+              labels: {
+                boxWidth: 20,
+                padding: 10,
+                usePointStyle: true,
+                textAlign: "center"
+              }
+            },
             tooltip: {
               callbacks: {
                 label: function (context) {
                   const raw = context.raw;
-                  const percent = ((raw / total) * 100).toFixed(1);
+                  const percent = ((raw / context.chart._metasets[0].total) * 100).toFixed(1);
                   return `${context.label}: $${raw.toFixed(2)} (${percent}%)`;
                 }
               }
             }
-          }
+          },
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '0%', // for pie chart (not donut)
+          radius: '90%' // << This locks the pie size
         }
       });
     }
@@ -202,18 +220,34 @@
           }]
         },
         options: {
+          layout: {
+            padding: 20
+          },
           plugins: {
-            legend: { position: "bottom" },
+            legend: {
+              position: "bottom",
+              align: "center",
+              labels: {
+                boxWidth: 20,
+                padding: 10,
+                usePointStyle: true,
+                textAlign: "center"
+              }
+            },
             tooltip: {
               callbacks: {
                 label: function (context) {
                   const raw = context.raw;
-                  const percent = ((raw / total) * 100).toFixed(1);
+                  const percent = ((raw / context.chart._metasets[0].total) * 100).toFixed(1);
                   return `${context.label}: $${raw.toFixed(2)} (${percent}%)`;
                 }
               }
             }
-          }
+          },
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '0%', // for pie chart (not donut)
+          radius: '90%' // << This locks the pie size
         }
       });
     }
