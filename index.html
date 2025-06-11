@@ -35,7 +35,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1 style="text-align:center;">Dark Horse Investment Group -- Portfolio</h1>
+  <h1 style="text-align:center; font-size:36px;"><em>Dark Horse Investment Group</em></h1>
+  <h2 style="text-align:center; margin-top:20px;">Portfolio</h2>
   <table id="portfolio">
     <thead>
       <tr><th>Symbol</th><th>Shares</th><th>Price</th><th>Market Value</th><th>Cost Basis</th><th>Gain/Loss</th><th>% Gain/Loss</th></tr>
@@ -64,6 +65,30 @@
 </div>
 
   <div id="customLegend" style="text-align:center; margin-top: 20px;"></div>
+
+  <h2 style="text-align:center; margin-top:40px;">Ownership</h2>
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Name</th><th>Initial Investment</th><th>Current Value</th><th>Gain/Loss</th><th>Ownership %</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>9/19/2023</td><td>Nate Lerner</td><td>$1,000.00</td><td>$1,521.60</td><td style="color:green;">$521.60</td><td>12.18%</td></tr>
+      <tr><td>9/19/2023</td><td>Miles Ziskin</td><td>$1,000.00</td><td>$1,521.60</td><td style="color:green;">$521.60</td><td>12.18%</td></tr>
+      <tr><td>9/19/2023</td><td>Peter Frame</td><td>$1,250.00</td><td>$1,902.00</td><td style="color:green;">$652.00</td><td>15.23%</td></tr>
+      <tr><td>9/19/2023</td><td>Ryan Khouri</td><td>$100.00</td><td>$152.16</td><td style="color:green;">$52.16</td><td>1.22%</td></tr>
+      <tr><td>9/19/2023</td><td>Julian Stux</td><td>$100.00</td><td>$152.16</td><td style="color:green;">$52.16</td><td>1.22%</td></tr>
+      <tr><td>9/19/2023</td><td>Sam Glusker</td><td>$100.00</td><td>$152.16</td><td style="color:green;">$52.16</td><td>1.22%</td></tr>
+      <tr><td>1/17/2024</td><td>Shayden Schorr</td><td>$100.00</td><td>$143.73</td><td style="color:green;">$43.73</td><td>1.15%</td></tr>
+      <tr><td>2/9/2024</td><td>Will Cerniglia</td><td>$450.00</td><td>$608.67</td><td style="color:green;">$158.67</td><td>4.87%</td></tr>
+      <tr><td>4/3/2024</td><td>Sam Northrop</td><td>$300.00</td><td>$384.63</td><td style="color:green;">$84.63</td><td>3.08%</td></tr>
+      <tr><td>4/25/2024</td><td>Jack Blase</td><td>$1,000.00</td><td>$1,319.20</td><td style="color:green;">$319.20</td><td>10.56%</td></tr>
+      <tr><td>5/7/2024</td><td>Julian Ziskin</td><td>$1,000.00</td><td>$1,253.00</td><td style="color:green;">$253.00</td><td>10.03%</td></tr>
+      <tr><td>6/9/2024</td><td>James Van Varick</td><td>$200.00</td><td>$230.48</td><td style="color:green;">$30.48</td><td>1.85%</td></tr>
+      <tr><td>6/24/2024</td><td>Ziskin Parents</td><td>$2,000.00</td><td>$2,266.80</td><td style="color:green;">$266.80</td><td>18.15%</td></tr>
+      <tr><td>11/7/2024</td><td>Zack Appel</td><td>$150.00</td><td>$156.02</td><td style="color:green;">$6.01</td><td>1.25%</td></tr>
+      <tr><td>5/13/2025</td><td>Julian Ziskin (2)</td><td>$700.00</td><td>$724.29</td><td style="color:green;">$24.29</td><td>5.80%</td></tr>
+    </tbody>
+  </table>
 
   <script>
     const apiKey = 'd10qn8pr01qse6ldf5v0d10qn8pr01qse6ldf5vg';
@@ -119,19 +144,19 @@
     };
 
     const colorMap = {
-  Technology: "#1f77b4",
-  "Consumer Discretionary": "#ff7f0e",
-  Healthcare: "#2ca02c",
-  Financials: "#d62728",
-  Industrials: "#9467bd",
-  "Consumer Staples": "#8c564b",
-  Cryptocurrency: "#e377c2",
-  "Real Estate": "#7f7f7f",
-  ETF: "#bcbd22",
-  Cash: "#17becf",
-  Value: "#aec7e8",
-  "Small Cap": "#ffbb78",
-  "Metals & Mining": "#98df8a",
+      Technology: "#1f77b4",
+      "Consumer Discretionary": "#ff7f0e",
+      Healthcare: "#2ca02c",
+      Financials: "#d62728",
+      Industrials: "#9467bd",
+      "Consumer Staples": "#8c564b",
+      Cryptocurrency: "#e377c2",
+      "Real Estate": "#7f7f7f",
+      ETF: "#bcbd22",
+      Cash: "#17becf",
+      Value: "#aec7e8",
+      "Small Cap": "#ffbb78",
+      "Metals & Mining": "#98df8a",
 };
 
     async function fetchPrice(symbol) {
