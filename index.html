@@ -6,51 +6,26 @@
   <title>Dark Horse Investment Group -- Portfolio</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
-    table { border-collapse: separate; border-spacing: 0; width: 100%; margin-top: 20px; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-    th { background-color: #f4f4f4; }
-    tbody tr:nth-child(even) { background-color: #fafafa; }
-    tbody tr:hover { background-color: #f1f1f1; }
-    tfoot { font-weight: bold; background-color: #eaeaea; }
-
-    .chart-wrapper {
-      flex: 1 1 300px;
-      max-width: 400px;
-      height: 350px; /* lock vertical space */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .chart-wrapper canvas {
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    
+    table { width:100%; border-collapse: separate; border-spacing:0; margin-top:20px; border-radius:6px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+    th, td { border:1px solid #ddd; padding:8px; text-align:center; }
+    th { background:#f4f4f4; }
+    tbody tr:nth-child(even){background:#fafafa;}
+    .chart-wrapper { width:350px; height:350px; margin:20px; display:flex; justify-content:center; align-items:center; }
+    .chart-wrapper canvas { width:100% !important; height:100% !important; }
+    .chart-container { display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-top:40px; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1 style="text-align: center;">Dark Horse Investment Group -- Portfolio</h1>
+  <h1 style="text-align:center;">Dark Horse Investment Group -- Portfolio</h1>
   <table id="portfolio">
     <thead>
-      <tr>
-        <th>Symbol</th>
-        <th>Shares</th>
-        <th>Price</th>
-        <th>Market Value</th>
-        <th>Cost Basis</th>
-        <th>Gain/Loss</th>
-        <th>% Gain/Loss</th>
-      </tr>
+      <tr><th>Symbol</th><th>Shares</th><th>Price</th><th>Market Value</th><th>Cost Basis</th><th>Gain/Loss</th><th>% Gain/Loss</th></tr>
     </thead>
     <tbody></tbody>
     <tfoot>
       <tr>
-        <td><strong>Total</strong></td>
-        <td>-</td>
-        <td>-</td>
+        <td><strong>Total</strong></td><td>-</td><td>-</td>
         <td id="totalValue">$0.00</td>
         <td id="totalCost">$0.00</td>
         <td id="totalGain">$0.00</td>
@@ -59,47 +34,15 @@
     </tfoot>
   </table>
 
-<div id="charts" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 40px; margin: 40px 0;">
-  <div class="chart-wrapper">
-    <canvas id="industryChart"></canvas>
+  <div class="chart-container">
+    <div class="chart-wrapper"><canvas id="industryChart"></canvas></div>
+    <div class="chart-wrapper"><canvas id="etfChart"></canvas></div>
   </div>
-  <div class="chart-wrapper">
-    <canvas id="etfChart"></canvas>
-  </div>
-</div>
 
-  
   <script>
-    const industryColors = {
-      "Technology": "#4caf50",
-      "Consumer Discretionary": "#2196f3",
-      "Industrials": "#ff9800",
-      "Financials": "#9c27b0",
-      "Healthcare": "#f44336",
-      "Consumer Staples": "#3f51b5",
-      "Cryptocurrency": "#00bcd4",
-      "Real Estate": "#795548",
-      "Materials": "#8bc34a",
-      "Diversified": "#c9cbcf",
-      "Cash": "#e0e0e0",
-      "Other": "#9e9e9e"
-    };
+    const apiKey = 'd10qn8pr01qse6ldf5v0d10qn8pr01qse6ldf5vg';
     
-    const apiKey = 'd10qn8pr01qse6ldf5v0d10qn8pr01qse6ldf5vg'; // Replace this with your real Finnhub API key
-
-    const industryMap = {
-      AAPL: "Technology", AMZN: "Consumer Discretionary", ARM: "Technology",
-      BABA: "Consumer Discretionary", BIRK: "Consumer Discretionary", CAT: "Industrials",
-      CRWD: "Technology", HWM: "Industrials", JPM: "Financials", KKR: "Financials",
-      META: "Technology", NVDA: "Technology", NVO: "Healthcare", RIOT: "Technology",
-      TSLA: "Consumer Discretionary", UNH: "Healthcare", WMT: "Consumer Staples",
-      BTC: "Cryptocurrency", CIBR: "ETF", ETH: "Cryptocurrency", ETHE: "Cryptocurrency",
-      GBTC: "Cryptocurrency", IWM: "ETF", KWEB: "ETF", SOXX: "ETF", VNQ: "Real Estate",
-      VTV: "ETF", VUG: "ETF", XME: "ETF"
-    };
-
-    const portfolio = [
-      { symbol: "AAPL", shares: 1.0083, costBasis: 176.04 },
+    const portfolio = [ { symbol: "AAPL", shares: 1.0083, costBasis: 176.04 },
       { symbol: "AMZN", shares: 3, costBasis: 396.36 },
       { symbol: "ARM", shares: 3, costBasis: 224.75 },
       { symbol: "BABA", shares: 2, costBasis: 144.80 },
@@ -127,225 +70,130 @@
       { symbol: "VNQ", shares: 3, costBasis: 270.23 },
       { symbol: "VTV", shares: 3.0703, costBasis: 495.90 },
       { symbol: "VUG", shares: 2.01, costBasis: 691.19 },
-      { symbol: "XME", shares: 3.017, costBasis: 182.41 }
-    ];
+      { symbol: "XME", shares: 3.017, costBasis: 182.41 } ];
+    
+    const cashPosition = { symbol: "CASH", costBasis:407.36 };
 
-    const cashPosition = { symbol: "CASH", shares: 0, costBasis: 407.36, price: 1 };
+    const industryMap = { AAPL: "Technology", AMZN: "Consumer Discretionary", ARM: "Technology",
+      BABA: "Consumer Discretionary", BIRK: "Consumer Discretionary", CAT: "Industrials",
+      CRWD: "Technology", HWM: "Industrials", JPM: "Financials", KKR: "Financials",
+      META: "Technology", NVDA: "Technology", NVO: "Healthcare", RIOT: "Technology",
+      TSLA: "Consumer Discretionary", UNH: "Healthcare", WMT: "Consumer Staples",
+      BTC: "Cryptocurrency", CIBR: "ETF", ETH: "Cryptocurrency", ETHE: "Cryptocurrency",
+      GBTC: "Cryptocurrency", IWM: "ETF", KWEB: "ETF", SOXX: "ETF", VNQ: "Real Estate",
+      VTV: "ETF", VUG: "ETF", XME: "ETF"
+    };
+    const etfIndustryMap = {  IWM: "Small Cap", KWEB: "Technology", SOXX: "Technology", VNQ: "Real Estate",
+      VTV: "Value", VUG: "Technology", XME: "Metals &  Mining"  }; // NEW
+
+    // Populate etfIndustryMap dynamically
+    for (const [sym, sector] of Object.entries(industryMap)) {
+      if (sector === "ETF") etfIndustryMap[sym] = sector;
+    }
+
+    const colorMap = {
+      Technology:"#2196f3", "Consumer Discretionary":"#ff9800",
+      Healthcare:"#4caf50", Financials:"#9c27b0", Industrials:"#3f51b5",
+      "Consumer Staples":"#795548", Cryptocurrency:"#ff5722",
+      "Real Estate":"#00bcd4", ETF:"#c9cbcf", Cash:"#607d8b",
+      Other:"#9e9e9e"
+    };
 
     async function fetchPrice(symbol) {
-      const response = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`);
-      const data = await response.json();
-      return data.c;
+      const r = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`);
+      const j = await r.json();
+      return j.c;
     }
 
-    function renderIndustryChart(dataByIndustry) {
-      const ctx = document.getElementById("industryChart").getContext("2d");
-      const labels = Object.keys(dataByIndustry);
-      const data = Object.values(dataByIndustry);
-      const total = data.reduce((sum, val) => sum + val, 0);
-
-      const labelWithPercent = labels.map((label, i) => {
-        const percent = ((data[i] / total) * 100).toFixed(1);
-        return `${label} (${percent}%)`;
-      });
-
+    function renderPieChart({ canvasId, dataObj }) {
+      const labels = Object.keys(dataObj);
+      const data = Object.values(dataObj);
+      const total = data.reduce((a,b)=>a+b,0);
+      const percentLabels = labels.map((l,i) => `${l} (${((data[i]/total)*100).toFixed(1)}%)`);
+      const ctx = document.getElementById(canvasId).getContext("2d");
       new Chart(ctx, {
-        type: "pie",
+        type:'pie',
         data: {
-          labels: labelWithPercent,
-          datasets: [{
-            label: "Industry Allocation",
-            data: data,
-            backgroundColor: labels.map(label => {
-              const plainLabel = label.split(" (")[0]; // Strip % from label
-              return industryColors[plainLabel] || "#999999";
-            })
+          labels:percentLabels,
+          datasets:[{
+            data,
+            backgroundColor: labels.map(l => colorMap[l]||"#888")
           }]
         },
-        options: {
-          layout: {
-            padding: 20
-          },
-          plugins: {
-            legend: {
-              position: "bottom",
-              align: "center",
-              labels: {
-                boxWidth: 20,
-                padding: 10,
-                usePointStyle: true,
-                textAlign: "center"
-              }
-            },
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  const raw = context.raw;
-                  const percent = ((raw / context.chart._metasets[0].total) * 100).toFixed(1);
-                  return `${context.label}: $${raw.toFixed(2)} (${percent}%)`;
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{
+            legend:{position:'bottom'},
+            tooltip:{
+              callbacks:{
+                label:ctx=>{
+                  const raw = ctx.raw;
+                  const pct = ((raw / total)*100).toFixed(1);
+                  return `${ctx.label}: $${raw.toFixed(2)} (${pct}%)`;
                 }
               }
             }
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '0%', // for pie chart (not donut)
-          radius: '90%' // << This locks the pie size
+          }
         }
       });
     }
 
-    function renderEtfChart(dataByEtfIndustry) {
-      const ctx = document.getElementById("etfChart").getContext("2d");
-      const labels = Object.keys(dataByEtfIndustry);
-      const data = Object.values(dataByEtfIndustry);
-      const total = data.reduce((sum, val) => sum + val, 0);
-
-      const labelWithPercent = labels.map((label, i) => {
-        const percent = ((data[i] / total) * 100).toFixed(1);
-        return `${label} (${percent}%)`;
-      });
-
-      new Chart(ctx, {
-        type: "pie",
-        data: {
-          labels: labelWithPercent,
-          datasets: [{
-            label: "ETF Sector Exposure",
-            data: data,
-            backgroundColor: labels.map(label => {
-              const plainLabel = label.split(" (")[0]; // Strip % from label
-              return industryColors[plainLabel] || "#999999";
-            })
-          }]
-        },
-        options: {
-          layout: {
-            padding: 20
-          },
-          plugins: {
-            legend: {
-              position: "bottom",
-              align: "center",
-              labels: {
-                boxWidth: 20,
-                padding: 10,
-                usePointStyle: true,
-                textAlign: "center"
-              }
-            },
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  const raw = context.raw;
-                  const percent = ((raw / context.chart._metasets[0].total) * 100).toFixed(1);
-                  return `${context.label}: $${raw.toFixed(2)} (${percent}%)`;
-                }
-              }
-            }
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '0%', // for pie chart (not donut)
-          radius: '90%' // << This locks the pie size
-        }
-      });
-    }
-
-    const etfIndustryMap = {
-      CIBR: "Technology",
-      IWM: "Diversified",
-      KWEB: "Technology",
-      SOXX: "Technology",
-      VNQ: "Real Estate",
-      VTV: "Financials",
-      VUG: "Technology",
-      XME: "Materials"
-    };
-    
     async function updatePortfolio() {
       const tbody = document.querySelector("#portfolio tbody");
       tbody.innerHTML = "";
-
-      let totalMarketValue = 0;
-      let totalCostBasis = 0;
+      let tMV = 0, tCB = 0;
       const industryTotals = {};
+      const etfTotals = {};
 
-      for (const stock of portfolio) {
+      for (const s of portfolio) {
         let price;
-        try {
-          price = await fetchPrice(stock.symbol);
-          if (!price || isNaN(price)) throw new Error("Invalid price");
-        } catch {
-          continue;
+        try { price = await fetchPrice(s.symbol); }
+        catch { continue; }
+        const mv = price * s.shares;
+        tMV += mv;
+        tCB += s.costBasis;
+        const ind = industryMap[s.symbol] || "Other";
+        industryTotals[ind] = (industryTotals[ind] || 0) + mv;
+        if (etfIndustryMap[s.symbol]) {
+          etfTotals["ETF"] = (etfTotals["ETF"] || 0) + mv;
         }
-
-        const marketValue = price * stock.shares;
-        const gain = marketValue - stock.costBasis;
-        const percentGain = (gain / stock.costBasis) * 100;
-
-        stock.lastMarketValue = marketValue;
-
-        totalMarketValue += marketValue;
-        totalCostBasis += stock.costBasis;
-
-        const industry = industryMap[stock.symbol] || "Other";
-        industryTotals[industry] = (industryTotals[industry] || 0) + stock.lastMarketValue;
-
+        const gain = mv - s.costBasis;
+        const pct = (gain/s.costBasis)*100;
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${stock.symbol}</td>
-          <td>${stock.shares.toFixed(4)}</td>
-          <td>$${price.toFixed(2)}</td>
-          <td>$${marketValue.toFixed(2)}</td>
-          <td>$${stock.costBasis.toFixed(2)}</td>
-          <td style="color: ${gain >= 0 ? 'green' : 'red'};">$${gain.toFixed(2)}</td>
-          <td style="color: ${gain >= 0 ? 'green' : 'red'};">${percentGain.toFixed(2)}%</td>
+          <td>${s.symbol}</td><td>${s.shares.toFixed(4)}</td>
+          <td>$${price.toFixed(2)}</td><td>$${mv.toFixed(2)}</td>
+          <td>$${s.costBasis.toFixed(2)}</td>
+          <td style="color:${gain>=0?'green':'red'};">$${gain.toFixed(2)}</td>
+          <td style="color:${gain>=0?'green':'red'};">${pct.toFixed(2)}%</td>
         `;
         tbody.appendChild(row);
       }
 
-      // Add cash row
-      totalMarketValue += cashPosition.costBasis;
-      totalCostBasis += cashPosition.costBasis;
-      industryTotals["Cash"] = cashPosition.costBasis;
+      industryTotals["Cash"] = (industryTotals["Cash"]||0) + cashPosition.costBasis;
+      tMV += cashPosition.costBasis;
+      tCB += cashPosition.costBasis;
+      const cr = document.createElement("tr");
+      cr.innerHTML = `
+        <td>CASH</td><td>-</td><td>-</td>
+        <td>$${cashPosition.costBasis.toFixed(2)}</td><td>$${cashPosition.costBasis.toFixed(2)}</td>
+        <td style="color:gray">$0.00</td><td style="color:gray">0.00%</td>`;
+      tbody.appendChild(cr);
 
-      const cashRow = document.createElement("tr");
-      cashRow.innerHTML = `
-        <td>${cashPosition.symbol}</td>
-        <td>-</td>
-        <td>-</td>
-        <td>$${cashPosition.costBasis.toFixed(2)}</td>
-        <td>$${cashPosition.costBasis.toFixed(2)}</td>
-        <td style="color: gray;">$0.00</td>
-        <td style="color: gray;">0.00%</td>
-      `;
-      tbody.appendChild(cashRow);
+      const gain = tMV - tCB;
+      const percentGain = (gain/tCB)*100;
+      document.getElementById("totalValue").textContent = `$${tMV.toFixed(2)}`;
+      document.getElementById("totalCost").textContent = `$${tCB.toFixed(2)}`;
+      document.getElementById("totalGain").textContent = `$${gain.toFixed(2)}`;
+      document.getElementById("totalPercentGain").textContent = `${percentGain.toFixed(2)}%`;
+      document.getElementById("totalGain").style.color = gain >= 0 ? 'green' : 'red';
+      document.getElementById("totalPercentGain").style.color = gain >= 0 ? 'green' : 'red';
 
-      const totalGain = totalMarketValue - totalCostBasis;
-      const totalPercentGain = (totalGain / totalCostBasis) * 100;
-
-      document.getElementById("totalValue").textContent = `$${totalMarketValue.toFixed(2)}`;
-      document.getElementById("totalCost").textContent = `$${totalCostBasis.toFixed(2)}`;
-      document.getElementById("totalGain").textContent = `$${totalGain.toFixed(2)}`;
-      document.getElementById("totalPercentGain").textContent = `${totalPercentGain.toFixed(2)}%`;
-      document.getElementById("totalGain").style.color = totalGain >= 0 ? 'green' : 'red';
-      document.getElementById("totalPercentGain").style.color = totalGain >= 0 ? 'green' : 'red';
-
-      renderIndustryChart(industryTotals);
-
-      const etfIndustryTotals = {};
-      portfolio.forEach(stock => {
-        if (etfIndustryMap[stock.symbol] && stock.lastMarketValue) {
-          const sector = etfIndustryMap[stock.symbol];
-          etfIndustryTotals[sector] = (etfIndustryTotals[sector] || 0) + stock.lastMarketValue;
-        }
-      });
-      renderEtfChart(etfIndustryTotals);
+      renderPieChart({ canvasId:'industryChart', dataObj:industryTotals });
+      renderPieChart({ canvasId:'etfChart', dataObj:etfTotals });
     }
-    
+
     updatePortfolio();
   </script>
 </body>
 </html>
-
