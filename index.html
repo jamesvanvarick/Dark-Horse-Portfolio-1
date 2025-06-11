@@ -10,9 +10,23 @@
     th, td { border:1px solid #ddd; padding:8px; text-align:center; }
     th { background:#f4f4f4; }
     tbody tr:nth-child(even){background:#fafafa;}
+
+    /* wrapper stuff */
     .chart-wrapper { width:350px; height:350px; margin:20px; display:flex; justify-content:center; align-items:center; }
     .chart-wrapper canvas { width:100% !important; height:100% !important; }
+    
     .chart-container { display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-top:40px; }
+    /* Individual chart sizes */
+    .industry-size {
+      width: 400px;
+      height: 400px;
+    }
+    
+    .etf-size {
+      width: 400px;
+      height: 400px;
+    }
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -35,8 +49,8 @@
   </table>
 
   <div class="chart-container">
-    <div class="chart-wrapper"><canvas id="industryChart"></canvas></div>
-    <div class="chart-wrapper"><canvas id="etfChart"></canvas></div>
+    <div class="chart-wrapper industry-size"><canvas id="industryChart"></canvas></div>
+    <div class="chart-wrapper etf-size"><canvas id="etfChart"></canvas></div>
   </div>
 
   <script>
