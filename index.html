@@ -71,7 +71,7 @@
       { symbol: "VTV", shares: 3.0703, costBasis: 495.90 },
       { symbol: "VUG", shares: 2.01, costBasis: 691.19 },
       { symbol: "XME", shares: 3.017, costBasis: 182.41 } ];
-    
+
     const cashPosition = { symbol: "CASH", costBasis:407.36 };
 
     const industryMap = { AAPL: "Technology", AMZN: "Consumer Discretionary", ARM: "Technology",
@@ -81,21 +81,19 @@
       TSLA: "Consumer Discretionary", UNH: "Healthcare", WMT: "Consumer Staples",
       BTC: "Cryptocurrency", CIBR: "ETF", ETH: "Cryptocurrency", ETHE: "Cryptocurrency",
       GBTC: "Cryptocurrency", IWM: "ETF", KWEB: "ETF", SOXX: "ETF", VNQ: "Real Estate",
-      VTV: "ETF", VUG: "ETF", XME: "ETF"
-    };
-    const etfIndustryMap = {  IWM: "Small Cap", KWEB: "Technology", SOXX: "Technology", VNQ: "Real Estate",
-      VTV: "Value", VUG: "Technology", XME: "Metals &  Mining"  }; // NEW
+      VTV: "ETF", VUG: "ETF", XME: "ETF" };
 
-    // Populate etfIndustryMap dynamically
-    for (const [sym, sector] of Object.entries(industryMap)) {
-      if (sector === "ETF") etfIndustryMap[sym] = sector;
-    }
+    const etfIndustryMap = {  
+      IWM: "Small Cap", KWEB: "Technology", SOXX: "Technology", VNQ: "Real Estate",
+      VTV: "Value", VUG: "Technology", XME: "Metals & Mining"  
+    };
 
     const colorMap = {
       Technology:"#2196f3", "Consumer Discretionary":"#ff9800",
       Healthcare:"#4caf50", Financials:"#9c27b0", Industrials:"#3f51b5",
       "Consumer Staples":"#795548", Cryptocurrency:"#ff5722",
       "Real Estate":"#00bcd4", ETF:"#c9cbcf", Cash:"#607d8b",
+      Value:"#8bc34a", "Small Cap":"#ffc107", "Metals & Mining":"#9e9e9e",
       Other:"#9e9e9e"
     };
 
@@ -155,7 +153,8 @@
         const ind = industryMap[s.symbol] || "Other";
         industryTotals[ind] = (industryTotals[ind] || 0) + mv;
         if (etfIndustryMap[s.symbol]) {
-          etfTotals["ETF"] = (etfTotals["ETF"] || 0) + mv;
+          const etfInd = etfIndustryMap[s.symbol] || "Other";
+          etfTotals[etfInd] = (etfTotals[etfInd] || 0) + mv;
         }
         const gain = mv - s.costBasis;
         const pct = (gain/s.costBasis)*100;
