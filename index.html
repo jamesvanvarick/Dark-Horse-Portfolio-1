@@ -11,22 +11,26 @@
     th { background:#f4f4f4; }
     tbody tr:nth-child(even){background:#fafafa;}
 
-    /* wrapper stuff */
-    .chart-wrapper { width:350px; height:350px; margin:20px; display:flex; justify-content:center; align-items:center; }
-    .chart-wrapper canvas { width:100% !important; height:100% !important; }
-    
-    .chart-container { display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-top:40px; }
-    /* Individual chart sizes */
-    .industry-size {
-      width: 400px;
-      height: 400px;
+    .chart-wrapper { 
+      width:480px; 
+      height:480px; 
+      margin:20px; 
+      display:flex; 
+      justify-content:center; 
+      align-items:center; 
     }
-    
-    .etf-size {
-      width: 400px;
-      height: 400px;
+    .chart-wrapper canvas { 
+      width:480px !important; 
+      height:480px !important; 
     }
 
+    .chart-container { 
+      display:flex; 
+      justify-content:center; 
+      gap:40px; 
+      flex-wrap:wrap; 
+      margin-top:40px; 
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -49,14 +53,23 @@
   </table>
 
   <div class="chart-container">
-    <div class="chart-wrapper industry-size"><canvas id="industryChart"></canvas></div>
-    <div class="chart-wrapper etf-size"><canvas id="etfChart"></canvas></div>
+  <div>
+    <p style="text-align:center; font-weight:bold; margin-bottom:4px;">Total Exposure</p>
+    <div class="chart-wrapper"><canvas id="industryChart"></canvas></div>
   </div>
+  <div>
+    <p style="text-align:center; font-weight:bold; margin-bottom:4px;">ETF Exposure Breakdown</p>
+    <div class="chart-wrapper"><canvas id="etfChart"></canvas></div>
+  </div>
+</div>
+
+  <div id="customLegend" style="text-align:center; margin-top: 20px;"></div>
 
   <script>
     const apiKey = 'd10qn8pr01qse6ldf5v0d10qn8pr01qse6ldf5vg';
-    
-    const portfolio = [ { symbol: "AAPL", shares: 1.0083, costBasis: 176.04 },
+
+    const portfolio = [
+      { symbol: "AAPL", shares: 1.0083, costBasis: 176.04 },
       { symbol: "AMZN", shares: 3, costBasis: 396.36 },
       { symbol: "ARM", shares: 3, costBasis: 224.75 },
       { symbol: "BABA", shares: 2, costBasis: 144.80 },
@@ -84,18 +97,21 @@
       { symbol: "VNQ", shares: 3, costBasis: 270.23 },
       { symbol: "VTV", shares: 3.0703, costBasis: 495.90 },
       { symbol: "VUG", shares: 2.01, costBasis: 691.19 },
-      { symbol: "XME", shares: 3.017, costBasis: 182.41 } ];
+      { symbol: "XME", shares: 3.017, costBasis: 182.41 }
+    ];
 
     const cashPosition = { symbol: "CASH", costBasis:407.36 };
 
-    const industryMap = { AAPL: "Technology", AMZN: "Consumer Discretionary", ARM: "Technology",
+    const industryMap = {
+      AAPL: "Technology", AMZN: "Consumer Discretionary", ARM: "Technology",
       BABA: "Consumer Discretionary", BIRK: "Consumer Discretionary", CAT: "Industrials",
       CRWD: "Technology", HWM: "Industrials", JPM: "Financials", KKR: "Financials",
       META: "Technology", NVDA: "Technology", NVO: "Healthcare", RIOT: "Technology",
       TSLA: "Consumer Discretionary", UNH: "Healthcare", WMT: "Consumer Staples",
       BTC: "Cryptocurrency", CIBR: "ETF", ETH: "Cryptocurrency", ETHE: "Cryptocurrency",
       GBTC: "Cryptocurrency", IWM: "ETF", KWEB: "ETF", SOXX: "ETF", VNQ: "Real Estate",
-      VTV: "ETF", VUG: "ETF", XME: "ETF" };
+      VTV: "ETF", VUG: "ETF", XME: "ETF"
+    };
 
     const etfIndustryMap = {  
       IWM: "Small Cap", KWEB: "Technology", SOXX: "Technology", VNQ: "Real Estate",
@@ -103,18 +119,34 @@
     };
 
     const colorMap = {
-      Technology:"#2196f3", "Consumer Discretionary":"#ff9800",
-      Healthcare:"#4caf50", Financials:"#9c27b0", Industrials:"#3f51b5",
-      "Consumer Staples":"#795548", Cryptocurrency:"#ff5722",
-      "Real Estate":"#00bcd4", ETF:"#c9cbcf", Cash:"#607d8b",
-      Value:"#8bc34a", "Small Cap":"#ffc107", "Metals & Mining":"#9e9e9e",
-      Other:"#9e9e9e"
-    };
+  Technology: "#1f77b4",
+  "Consumer Discretionary": "#ff7f0e",
+  Healthcare: "#2ca02c",
+  Financials: "#d62728",
+  Industrials: "#9467bd",
+  "Consumer Staples": "#8c564b",
+  Cryptocurrency: "#e377c2",
+  "Real Estate": "#7f7f7f",
+  ETF: "#bcbd22",
+  Cash: "#17becf",
+  Value: "#aec7e8",
+  "Small Cap": "#ffbb78",
+  "Metals & Mining": "#98df8a",
+};
 
     async function fetchPrice(symbol) {
       const r = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`);
       const j = await r.json();
       return j.c;
+    }
+
+    function renderLegend() {
+      const container = document.getElementById("customLegend");
+      container.innerHTML = '<p><strong>Sectors</strong></p>' +
+        '<div style="display:grid; grid-template-columns: repeat(3, auto); gap:8px 24px; justify-content:center; text-align:left; font-size:14px;">' +
+        Object.entries(colorMap).map(([label, color]) =>
+          `<div style="margin:4px 0;"><span style="display:inline-block;width:12px;height:12px;background:${color};margin-right:6px;"></span>${label}</div>`
+        ).join('') + '</div>';
     }
 
     function renderPieChart({ canvasId, dataObj }) {
@@ -124,23 +156,29 @@
       const percentLabels = labels.map((l,i) => `${l} (${((data[i]/total)*100).toFixed(1)}%)`);
       const ctx = document.getElementById(canvasId).getContext("2d");
       new Chart(ctx, {
-        type:'pie',
+        type:'doughnut',
         data: {
           labels:percentLabels,
           datasets:[{
             data,
-            backgroundColor: labels.map(l => colorMap[l]||"#888")
+            backgroundColor: labels.map(l => colorMap[l]||"#888"),
+            cutout: '35%',
+            radius: '100%'
           }]
         },
-        options:{
-          responsive:true, maintainAspectRatio:false,
-          plugins:{
-            legend:{position:'bottom'},
-            tooltip:{
-              callbacks:{
-                label:ctx=>{
+        options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          layout: {
+            padding: 20
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => {
                   const raw = ctx.raw;
-                  const pct = ((raw / total)*100).toFixed(1);
+                  const pct = ((raw / total) * 100).toFixed(1);
                   return `${ctx.label}: $${raw.toFixed(2)} (${pct}%)`;
                 }
               }
@@ -164,26 +202,26 @@
         const mv = price * s.shares;
         tMV += mv;
         tCB += s.costBasis;
-        const ind = industryMap[s.symbol] || "Other";
+        const ind = industryMap[s.symbol]; if (!ind) continue;
         industryTotals[ind] = (industryTotals[ind] || 0) + mv;
         if (etfIndustryMap[s.symbol]) {
           const etfInd = etfIndustryMap[s.symbol] || "Other";
           etfTotals[etfInd] = (etfTotals[etfInd] || 0) + mv;
         }
         const gain = mv - s.costBasis;
-        const pct = (gain/s.costBasis)*100;
+        const pct = (gain / s.costBasis) * 100;
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${s.symbol}</td><td>${s.shares.toFixed(4)}</td>
           <td>$${price.toFixed(2)}</td><td>$${mv.toFixed(2)}</td>
           <td>$${s.costBasis.toFixed(2)}</td>
-          <td style="color:${gain>=0?'green':'red'};">$${gain.toFixed(2)}</td>
-          <td style="color:${gain>=0?'green':'red'};">${pct.toFixed(2)}%</td>
+          <td style="color:${gain >= 0 ? 'green' : 'red'};">$${gain.toFixed(2)}</td>
+          <td style="color:${gain >= 0 ? 'green' : 'red'};">${pct.toFixed(2)}%</td>
         `;
         tbody.appendChild(row);
       }
 
-      industryTotals["Cash"] = (industryTotals["Cash"]||0) + cashPosition.costBasis;
+      industryTotals["Cash"] = (industryTotals["Cash"] || 0) + cashPosition.costBasis;
       tMV += cashPosition.costBasis;
       tCB += cashPosition.costBasis;
       const cr = document.createElement("tr");
@@ -194,7 +232,7 @@
       tbody.appendChild(cr);
 
       const gain = tMV - tCB;
-      const percentGain = (gain/tCB)*100;
+      const percentGain = (gain / tCB) * 100;
       document.getElementById("totalValue").textContent = `$${tMV.toFixed(2)}`;
       document.getElementById("totalCost").textContent = `$${tCB.toFixed(2)}`;
       document.getElementById("totalGain").textContent = `$${gain.toFixed(2)}`;
@@ -202,8 +240,9 @@
       document.getElementById("totalGain").style.color = gain >= 0 ? 'green' : 'red';
       document.getElementById("totalPercentGain").style.color = gain >= 0 ? 'green' : 'red';
 
-      renderPieChart({ canvasId:'industryChart', dataObj:industryTotals });
-      renderPieChart({ canvasId:'etfChart', dataObj:etfTotals });
+      renderPieChart({ canvasId: 'industryChart', dataObj: industryTotals });
+      renderPieChart({ canvasId: 'etfChart', dataObj: etfTotals });
+      renderLegend();
     }
 
     updatePortfolio();
