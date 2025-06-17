@@ -74,7 +74,7 @@
   <div class="chart-container">
   <div>
     <p style="text-align:center; font-weight:bold; margin-bottom:4px;">Total Exposure</p>
-    <div class="chart-wrapper"><canvas id="industryChart"></canvas></div>
+    <div class="chart-wrapper"><canvas id="SectorChart"></canvas></div>
   </div>
   <div>
     <p style="text-align:center; font-weight:bold; margin-bottom:4px;">ETF Exposure Breakdown</p>
@@ -145,7 +145,7 @@
 
     const cashPosition = { symbol: "CASH", costBasis:407.36 };
 
-    const industryMap = {
+    const SectorMap = {
       AAPL: "Technology", AMZN: "Consumer Discretionary", ARM: "Technology",
       BABA: "Consumer Discretionary", BIRK: "Consumer Discretionary", CAT: "Industrials",
       CRWD: "Technology", HWM: "Industrials", JPM: "Financials", KKR: "Financials",
@@ -156,7 +156,7 @@
       VTV: "ETF", VUG: "ETF", XME: "ETF"
     };
 
-    const etfIndustryMap = {  
+    const etfSectorMap = {  
       IWM: "Small Cap", KWEB: "Technology", SOXX: "Technology", VNQ: "Real Estate",
       VTV: "Value", VUG: "Technology", XME: "Metals & Mining"  
     };
@@ -235,7 +235,7 @@
       const tbody = document.querySelector("#portfolio tbody");
       tbody.innerHTML = "";
       let tMV = 0, tCB = 0;
-      const industryTotals = {};
+      const SectorTotals = {};
       const etfTotals = {};
 
       for (const s of portfolio) {
@@ -245,10 +245,10 @@
         const mv = price * s.shares;
         tMV += mv;
         tCB += s.costBasis;
-        const ind = industryMap[s.symbol]; if (!ind) continue;
-        industryTotals[ind] = (industryTotals[ind] || 0) + mv;
-        if (etfIndustryMap[s.symbol]) {
-          const etfInd = etfIndustryMap[s.symbol] || "Other";
+        const ind = SectorMap[s.symbol]; if (!ind) continue;
+        SectorTotals[ind] = (SectorTotals[ind] || 0) + mv;
+        if (etfSectorMap[s.symbol]) {
+          const etfInd = etfSectorMap[s.symbol] || "Other";
           etfTotals[etfInd] = (etfTotals[etfInd] || 0) + mv;
         }
         const gain = mv - s.costBasis;
@@ -263,7 +263,7 @@
         tbody.appendChild(row);
       }
 
-      industryTotals["Cash"] = (industryTotals["Cash"] || 0) + cashPosition.costBasis;
+      SectorTotals["Cash"] = (SectorTotals["Cash"] || 0) + cashPosition.costBasis;
       tMV += cashPosition.costBasis;
       tCB += cashPosition.costBasis;
       const cr = document.createElement("tr");
@@ -282,7 +282,7 @@
       document.getElementById("totalGain").style.color = gain >= 0 ? 'green' : 'red';
       document.getElementById("totalPercentGain").style.color = gain >= 0 ? 'green' : 'red';
 
-      renderPieChart({ canvasId: 'industryChart', dataObj: industryTotals });
+      renderPieChart({ canvasId: 'SectorChart', dataObj: SectorTotals });
       renderPieChart({ canvasId: 'etfChart', dataObj: etfTotals });
       renderLegend();
     }
