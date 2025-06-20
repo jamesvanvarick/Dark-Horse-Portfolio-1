@@ -22,7 +22,7 @@
       border-radius:6px; 
       overflow:hidden; 
       box-shadow:0 2px 8px rgba(0,0,0,0.3);
-      background-color: #222
+      background-color: #222;
       color: #f5f5dc;
     }
     th, td { 
@@ -33,6 +33,7 @@
     th { 
       background:#333; 
       color: #f5f5dc;
+      font-size: 16px;
     }
     tbody tr:nth-child(even) { background: #1a1a1a; font-weight: normal; }
 
@@ -206,7 +207,7 @@
 
     function renderLegend() {
       const container = document.getElementById("customLegend");
-      container.innerHTML = '<p><strong>Sectors</strong></p>' +
+        container.innerHTML = '<p style="font-weight: bold; font-size: 16px;">Sectors</p>' +
         '<div style="display:grid; grid-template-columns: repeat(3, auto); gap:8px 24px; justify-content:center; text-align:left; font-size:14px;">' +
         Object.entries(colorMap).map(([label, color]) =>
           `<div style="margin:4px 0;"><span style="display:inline-block;width:12px;height:12px;background:${color};margin-right:6px;"></span>${label}</div>`
