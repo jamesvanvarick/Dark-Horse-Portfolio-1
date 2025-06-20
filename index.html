@@ -5,11 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dark Horse Investment Group -- Portfolio</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    table { width:100%; border-collapse: separate; border-spacing:0; margin-top:20px; border-radius:6px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
-    th, td { border:1px solid #ddd; padding:8px; text-align:center; }
-    th { background:#f4f4f4; }
-    tbody tr:nth-child(even) { background: #fafafa; font-weight: normal; }
+    .gold-text {
+      color: #ffd700
+    }
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 20px; 
+      background-color: #111;
+      color: #f5f5dc;
+     }
+    table { 
+      width:100%; 
+      border-collapse: separate; 
+      border-spacing:0; 
+      margin-top:20px; 
+      border-radius:6px; 
+      overflow:hidden; 
+      box-shadow:0 2px 8px rgba(0,0,0,0.3);
+      background-color: #222
+      color: #f5f5dc;
+    }
+    th, td { 
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: center;
+    }
+    th { 
+      background:#333; 
+      color: #f5f5dc;
+    }
+    tbody tr:nth-child(even) { background: #1a1a1a; font-weight: normal; }
 
     .chart-wrapper { 
       width:480px; 
@@ -35,10 +60,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1 style="text-align:center; font-size:36px;"><em>Dark Horse Investment Group</em></h1>
-
+  <h1 class="gold-text"; style="text-align:center; font-size:36px;"><em>Dark Horse Investment Group</em></h1>
   <div style="margin-top: 20px;">
-    <h2 style="text-align:center;">Our Philosophy</h2>
+    <h2 class="gold-text"; style="text-align:center;">Our Philosophy</h2>
     <p style="max-width: 700px; margin: 0 auto 20px auto; font-size: 16px; line-height: 1.8;">At Dark Horse, we believe in a hybrid investment approach that balances long-term discipline with active experimentation, ensuring stability for shareholders and an optimal learning experience for students. Our portfolio is constructed using a core-satellite framework:</p>
     <ul style="max-width: 700px; margin: 0 auto; font-size: 16px; text-align:left; line-height: 1.8;">
       <li><strong>The core portion (60–70%)</strong> is composed of high-quality companies and ETFs designed to provide steady, long-term growth. These holdings reflect broader market exposure and are selected for their durable business models and consistent performance.</li>
@@ -48,13 +72,12 @@
           <li>Deep value or contrarian opportunities.</li>
           <li>Macro/event-driven strategies.</li>
         </ul>
+      <li><strong>Our cash position (5-15%)</strong> instills discipline in our capital allocation process and ultimately gives us the flexibility to act quickly when market opportunities arise.</li>
       </li>
     </ul>
     <p style="max-width: 700px; margin: 20px auto 0 auto; font-size: 16px; line-height: 1.8;">Together, this structure allows us to remain grounded in fundamentals while encouraging independent thinking, curiosity, and real-world decision-making.</p>
   </div>
-
-  <h2 style="text-align:center; margin-top:20px;">Portfolio</h2>
-
+  <h2 class="gold-text" style="text-align:center; margin-top:20px;">Portfolio</h2>
   <table id="portfolio">
     <thead>
       <tr><th>Symbol</th><th>Shares</th><th>Price</th><th>Cost Basis</th><th>Market Value</th><th>Gain/Loss</th><th>% Gain/Loss</th></tr>
@@ -81,10 +104,8 @@
     <div class="chart-wrapper"><canvas id="etfChart"></canvas></div>
   </div>
 </div>
-
   <div id="customLegend" style="text-align:center; margin-top: 20px;"></div>
-
-  <h2 style="text-align:center; margin-top:40px;">Ownership</h2>
+  <h2 class="gold-text"; style="text-align:center; margin-top:40px;">Ownership</h2>
     <table>
       <thead>
         <tr><th>Date</th><th>Name</th><th>Initial Investment</th><th>Market Value</th><th>Gain/Loss</th><th>% Gain/Loss</th><th>Ownership %</th></tr>
